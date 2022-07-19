@@ -8,4 +8,4 @@ To use this simple app:
 - Run the executable.
 - It will automatically convert the file names all mp4s that are from Twitch to use the video title.
 
-*Note: If Windows quarentines the zip right away and claims it is a virus, you can get around this by downloading the whole repository as a zip, then getting the zip file from the downloaded repository.
+*Note: If Windows quarentines the zip right away and claims it is a virus, you can get around this by downloading the whole repository as a zip, then getting the zip file from the downloaded repository.*
