@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
@@ -14,33 +15,33 @@ namespace TwitchVidConverter
         {
             try
             {
-                var tst = getVideosAsync();
-                tst.Wait();
+                var convertVids = ConvertVideosAsync();
+                convertVids.Wait();
             }
-            catch (Exception ex)
+            catch (Exception ex) 
             {
                 MessageBox.Show(ex.Message);
             }
         }
 
-        private static async Task getVideosAsync()
+        private static async Task ConvertVideosAsync()
         {
             List<string> vidIds = new List<string>();
-            string[] files = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory());
-            foreach (var file in files)
-                if (!file.EndsWith(".exe") && !file.EndsWith(".xml") && !file.EndsWith(".dll") && !file.EndsWith(".pdb") && !file.EndsWith(".config"))
-                    vidIds.Add(System.IO.Path.GetFileName(file.Split('-')[0]));
+            List<string> mp4Files = Directory.GetFiles(Directory.GetCurrentDirectory()).Where(f => Path.GetExtension(f) == ".mp4").ToList();
+            foreach (var file in mp4Files)
+                    vidIds.Add(Path.GetFileName(file.Split('-')[0]));
 
+            // The first paramter should be substituted with your client id, the 2nd should be your app secret
             var twitchApi = new TwitchApiBuilder("xxxxx").WithClientSecret("xxxxx").Build();
             var result = await twitchApi.Videos.GetVideos(vidIds.ToArray());
-            HelixVideo[] videoData = result.Data;
+
             foreach (HelixVideo vid in result.Data)
             {
-                string[] vidFiles = System.IO.Directory.GetFiles(System.IO.Directory.GetCurrentDirectory());
+                string[] vidFiles = Directory.GetFiles(Directory.GetCurrentDirectory());
                 if (vidFiles.Where(v => v.Contains(vid.Id)).Count() > 0)
                 {
                     string vidFileName = vidFiles.Where(v => v.Contains(vid.Id)).First();
-                    System.IO.File.Move(vidFileName, vid.Title + System.IO.Path.GetExtension(vidFileName));
+                    File.Move(vidFileName, vid.Title + Path.GetExtension(vidFileName));
                 }
             }
         }
